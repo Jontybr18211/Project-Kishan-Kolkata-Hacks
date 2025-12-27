@@ -72,11 +72,12 @@ st.markdown("""
 }
 
 .sub-header {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--primary);
     font-weight: 700;
-    margin-top: 2rem;
-    padding-bottom: 0.5rem;
+    margin-top: 1rem; /* reduced spacing above sub-headers */
+    margin-bottom: 0.5rem; /* small gap to following content */
+    padding-bottom: 0.35rem;
     border-bottom: 2px solid #e2e8f0;
 }
 
@@ -185,10 +186,16 @@ st.markdown("""
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     border: 1px solid rgba(255,255,255,0.08);
     height: 100%;
+    margin-top: 6px; /* tighten card spacing under headings */
+    display: flex; /* center content vertically/horizontally */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px; /* ensures all cards have equal visual height */
 }
 .metric-card-box:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
 .metric-card-box h3 { margin: 0; font-size: 0.95rem; font-weight:700; opacity:0.95; }
-.metric-card-box h2 { margin: 8px 0 4px 0; font-size: 2rem; font-weight:800; }
+.metric-card-box h2 { margin: 10px 0 6px 0; font-size: 2.1rem; font-weight:800; line-height:1; }
 .metric-card-box p { margin:0; opacity:0.9; }
 
 /* Gradients */
@@ -199,6 +206,15 @@ st.markdown("""
 
 /* Typography & general polish */
 body, .stMarkdown, .stText { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
+
+/* Section headers used for panels */
+.section-header {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-top: 0.6rem;
+    margin-bottom: 0.5rem;
+}
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
@@ -921,7 +937,7 @@ def main():
 
     # --- 3. MAIN HEADER ---
     st.markdown(f'<div class="main-header">🌱 {t["title"]}</div>', unsafe_allow_html=True)
-    st.markdown(f'<p style="text-align: center; font-size: 1.2rem; color: #1a531b; margin-bottom: 2rem;">{t["tagline"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="text-align: center; font-size: 1.08rem; color: #1a531b; margin-bottom: 0.9rem; margin-top:0.25rem;">{t["tagline"]}</p>', unsafe_allow_html=True)
     
     # --- 4. MAP & ANALYSIS SECTION ---
     col1, col2 = st.columns([2, 1])
