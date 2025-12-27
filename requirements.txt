@@ -34,3 +34,9 @@ tensorboard
 tensorflow
 torch
 pypdf
+langchain-community
+langchain-text-splitters
+faiss-cpu
+sentence-transformers
+transformers
+huggingface-hub

@@ -277,12 +277,18 @@ class ProjectKishan:
             if service_account and private_key_path and os.path.exists(private_key_path):
                 credentials = ee.ServiceAccountCredentials(service_account, private_key_path)
                 ee.Initialize(credentials, project=os.getenv('GEE_PROJECT_ID'))
+                print("✅ GEE Initialized with Service Account")
                 return True
             else:
                 # Try to initialize with existing credentials
                 ee.Initialize(project=os.getenv('GEE_PROJECT_ID'))
+                print("✅ GEE Initialized with Default Credentials")
                 return True
         except Exception as e:
+            print(f"❌ GEE Initialization Failed: {str(e)}")
+            print(f"   - Service Account: {os.getenv('GEE_SERVICE_ACCOUNT', 'NOT SET')}")
+            print(f"   - Key Path: {os.getenv('GEE_PRIVATE_KEY_PATH', 'NOT SET')}")
+            print(f"   - Project ID: {os.getenv('GEE_PROJECT_ID', 'NOT SET')}")
             return False
     
     def load_ml_model(self):
