@@ -35,151 +35,213 @@ st.set_page_config(
 # Custom CSS for professional styling with better text visibility
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 3.5rem;
-        color: #2E8B57;
-        text-align: center;
-        margin-bottom: 1rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #2E8B57, #32CD32);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .sub-header {
-        font-size: 1.8rem;
-        color: #1a531b;  /* Darker green for better visibility */
-        margin-top: 1rem;
-        font-weight: 600;
-        border-bottom: 2px solid #32CD32;
-        padding-bottom: 0.5rem;
-    }
-    .section-header {
-        font-size: 1.4rem;
-        color: #1a531b;  /* Darker green for better visibility */
-        margin: 1.5rem 0 1rem 0;
-        font-weight: 600;
-    }
-    .prediction-card {
-        background: linear-gradient(135deg, #F0FFF0, #E8F5E8);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border-left: 5px solid #32CD32;
-        margin: 1rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        color: #1a3d1a;  /* Dark green text for better contrast */
-    }
-    .warning-card {
-        background: linear-gradient(135deg, #FFF8DC, #FFEFD5);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border-left: 5px solid #FFD700;
-        margin: 1rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        color: #5c4d00;  /* Darker yellow text */
-    }
-    .error-card {
-        background: linear-gradient(135deg, #FFE4E1, #FFD3D3);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border-left: 5px solid #FF4500;
-        margin: 1rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        color: #8b0000;  /* Dark red text */
-    }
-    .info-card {
-        background: linear-gradient(135deg, #E6F3FF, #D4EBFF);
-        padding: 1.5rem;
-        border-radius: 15px;
-        border-left: 5px solid #1E90FF;
-        margin: 1rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        color: #003366;  /* Dark blue text */
-    }
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid #E0E0E0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        text-align: center;
-        color: #1a3d1a;  /* Dark green text */
-    }
-    .metric-card h3 {
-        color: #1a531b;  /* Darker green for headers */
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
-    .metric-card h2 {
-        color: #2E8B57;  /* Medium green for values */
-        font-size: 2rem;
-        margin: 0.5rem 0;
-    }
-    .metric-card p {
-        color: #666666;
-        margin: 0;
-    }
-    .stButton button {
-        background: linear-gradient(135deg, #2E8B57, #32CD32);
-        color: white;
-        border: none;
-        padding: 0.5rem 2rem;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    .stButton button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
-    }
-    .chat-user {
-        background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
-        padding: 1rem;
-        border-radius: 15px;
-        margin: 0.5rem 0;
-        border: 1px solid #90CAF9;
-        color: #0d47a1;  /* Dark blue text */
-    }
-    .chat-ai {
-        background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
-        padding: 1rem;
-        border-radius: 15px;
-        margin: 0.5rem 0;
-        border: 1px solid #81C784;
-        color: #1a531b;  /* Dark green text */
-    }
-    .map-container {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border: 2px solid #E0E0E0;
-    }
-    .config-section {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        padding: 1.5rem;
-        border-radius: 15px;
-        margin: 1rem 0;
-        border: 1px solid #dee2e6;
-    }
-    .status-indicator {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-    .status-online {
-        background-color: #28a745;
-    }
-    .status-offline {
-        background-color: #dc3545;
-    }
-    /* Improve general text visibility */
-    .stMarkdown {
-        color: #333333;
-    }
-    .stText {
-        color: #333333;
-    }
+/* =========================
+   GLOBAL VARIABLES & THEMING
+   Using RGB variables allows for easy transparency (rgba)
+========================= */
+:root {
+    --primary: #2f855a;
+    --primary-light: #48bb78;
+    --primary-dark: #22543d;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --text-main: inherit; /* Let Streamlit handle light/dark mode text */
+    --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --radius: 12px;
+}
+
+/* =========================
+   RESETS & HELPERS
+========================= */
+/* Ensure all markdown text inherits the theme's text color */
+.stMarkdown {
+    font-family: 'Inter', sans-serif;
+}
+
+/* =========================
+   HEADERS (Enhanced Gradient)
+========================= */
+.main-header {
+    font-size: clamp(2rem, 5vw, 3.5rem); /* Responsive sizing */
+    text-align: center;
+    font-weight: 800;
+    padding: 1rem 0;
+    background: linear-gradient(135deg, #276749 0%, #38a169 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.sub-header {
+    font-size: 1.5rem;
+    color: var(--primary);
+    font-weight: 700;
+    margin-top: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* =========================
+   CARDS (Glassmorphism & Contrast)
+========================= */
+/* Shared Base */
+.custom-card {
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.prediction-card {
+    background-color: #f0fff4;
+    border-left: 6px solid var(--primary);
+    color: #1c4532;
+}
+
+.warning-card {
+    background-color: #fffaf0;
+    border-left: 6px solid #dd6b20;
+    color: #744210;
+}
+
+.error-card {
+    background-color: #fff5f5;
+    border-left: 6px solid #e53e3e;
+    color: #742a2a;
+}
+
+/* =========================
+   METRICS (Modernized)
+========================= */
+[data-testid="stMetricValue"] {
+    font-size: 2.2rem !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+}
+
+.metric-container {
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+    border: 1px solid #edf2f7;
+}
+
+/* =========================
+   BUTTONS (Full Width Option)
+========================= */
+.stButton > button {
+    width: 100%; /* Optional: fits the container */
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stButton > button:hover {
+    border: none;
+    color: white !important;
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(47, 133, 90, 0.3);
+}
+
+/* =========================
+   CHAT BUBBLES
+========================= */
+.chat-ai {
+    background-color: #e6fffa;
+    color: #234e52;
+    padding: 15px;
+    border-radius: 15px 15px 15px 0px;
+    margin-bottom: 10px;
+    border: 1px solid #b2f5ea;
+}
+
+.chat-user {
+    background-color: #f7fafc;
+    color: #2d3748;
+    padding: 15px;
+    border-radius: 15px 15px 0px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+    text-align: right;
+}
+
+/* =========================
+   FARM METRIC CARDS & ENHANCEMENTS
+   High-impact UI improvements: gradients, responsiveness, typography
+========================= */
+.metric-card-box {
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid rgba(255,255,255,0.08);
+    height: 100%;
+}
+.metric-card-box:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.12); }
+.metric-card-box h3 { margin: 0; font-size: 0.95rem; font-weight:700; opacity:0.95; }
+.metric-card-box h2 { margin: 8px 0 4px 0; font-size: 2rem; font-weight:800; }
+.metric-card-box p { margin:0; opacity:0.9; }
+
+/* Gradients */
+.bg-ndvi { background: linear-gradient(135deg,#10b981 0%,#047857 100%); }
+.bg-yield { background: linear-gradient(135deg,#f59e0b 0%,#b45309 100%); }
+.bg-moisture { background: linear-gradient(135deg,#3b82f6 0%,#1e3a8a 100%); }
+.bg-rain { background: linear-gradient(135deg,#06b6d4 0%,#0ea5e9 100%); }
+
+/* Typography & general polish */
+body, .stMarkdown, .stText { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .metric-card-box h2 { font-size: 1.6rem; }
+    .metric-card-box { padding: 14px; }
+}
+
+/* Centering helpers for map + action */
+.center-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.5rem 0;
+}
+.center-wrapper .folium-map, .center-wrapper iframe {
+    width: 100% !important;
+    max-width: 980px;
+    border-radius: 12px;
+}
+.center-button { width: 100%; max-width: 480px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+
+/* Image styling for farmer illustration */
+.center-button img { width: 140px; max-width: 28vw; height: auto; border-radius: 8px; display:block; }
+
+/* Make the analyze button very prominent for low-vision users */
+.center-button .stButton > button {
+    font-size: 1.9rem !important;
+    padding: 1.1rem 1.6rem !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 14px 30px rgba(46,139,87,0.24) !important;
+}
+.center-button .stButton > button:focus {
+    outline: 4px solid rgba(79, 154, 98, 0.25) !important;
+}
+
+@media (max-width: 480px) {
+    .center-button img { width: 120px; }
+    .center-button .stButton > button { font-size: 1.6rem !important; padding: 0.9rem 1.2rem !important; }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -277,12 +339,18 @@ class ProjectKishan:
             if service_account and private_key_path and os.path.exists(private_key_path):
                 credentials = ee.ServiceAccountCredentials(service_account, private_key_path)
                 ee.Initialize(credentials, project=os.getenv('GEE_PROJECT_ID'))
+                print("✅ GEE Initialized with Service Account")
                 return True
             else:
                 # Try to initialize with existing credentials
                 ee.Initialize(project=os.getenv('GEE_PROJECT_ID'))
+                print("✅ GEE Initialized with Default Credentials")
                 return True
         except Exception as e:
+            print(f"❌ GEE Initialization Failed: {str(e)}")
+            print(f"   - Service Account: {os.getenv('GEE_SERVICE_ACCOUNT', 'NOT SET')}")
+            print(f"   - Key Path: {os.getenv('GEE_PRIVATE_KEY_PATH', 'NOT SET')}")
+            print(f"   - Project ID: {os.getenv('GEE_PROJECT_ID', 'NOT SET')}")
             return False
     
     def load_ml_model(self):
@@ -858,39 +926,7 @@ def main():
     # --- 4. MAP & ANALYSIS SECTION ---
     col1, col2 = st.columns([2, 1])
     
-    # --- MAP LOGIC (Must run BEFORE Sidebar Inputs to avoid error) ---
-    with col1:
-        # Display Interactive Map using state coordinates
-        map_obj = create_interactive_map(
-            st.session_state.current_location["lat"],
-            st.session_state.current_location["lon"]
-        )
-        map_data = st_folium(map_obj, width=None, height=400, returned_objects=["last_clicked"])
-        
-        # HANDLE MAP CLICKS (The Sync Logic)
-        if map_data and map_data.get("last_clicked"):
-            clicked_lat = map_data["last_clicked"]["lat"]
-            clicked_lng = map_data["last_clicked"]["lng"]
-            
-            # Get current stored location
-            current_lat = st.session_state.current_location["lat"]
-            current_lng = st.session_state.current_location["lon"]
-            
-            # Check if new click (tolerance ~11 meters)
-            if abs(clicked_lat - current_lat) > 0.0001 or abs(clicked_lng - current_lng) > 0.0001:
-                
-                # 1. Update Main State
-                st.session_state.current_location = {
-                    "lat": clicked_lat, 
-                    "lon": clicked_lng
-                }
-                
-                # 2. UPDATE WIDGET STATE (Legal here because widgets aren't drawn yet!)
-                st.session_state["lat_input_box"] = clicked_lat
-                st.session_state["lon_input_box"] = clicked_lng
-                
-                # 3. Rerun to refresh the view
-                st.rerun()
+    # --- MAP LOGIC (moved: map will render in centered container below sidebar inputs) ---
 
     # --- 5. SIDEBAR PART 2 (Inputs & Crop Selector) ---
     # Now we draw the widgets. They will pick up the updated values from above.
@@ -938,53 +974,80 @@ def main():
             st.write(f"{status_icon(Kishan.api_status['weather'])} Weather")
             st.write(f"{status_icon(Kishan.api_status['gemini'])} Gemini")
 
-    # --- 6. ANALYSIS BUTTON SECTION ---
-    with col2:
-        # Check API Status
-        required_apis = ['model']
-        missing_apis = [api for api in required_apis if not Kishan.api_status[api]]
-        analyze_disabled = bool(missing_apis)
+    # --- 6. ANALYSIS BUTTON SECTION (Centered map + button) ---
+    # Render the map and the analyze button centered on the page (after sidebar inputs).
+    st.markdown('<div class="center-wrapper">', unsafe_allow_html=True)
 
-        if missing_apis:
-            st.error(f"❌ API Error: {', '.join(missing_apis)}")
+    # Display Interactive Map using state coordinates
+    map_obj = create_interactive_map(
+        st.session_state.current_location["lat"],
+        st.session_state.current_location["lon"]
+    )
+    map_data = st_folium(map_obj, width=None, height=420, returned_objects=["last_clicked"])
 
-        # ANALYZE BUTTON
-        if st.button(t["analyze_btn"], type="primary", use_container_width=True, disabled=analyze_disabled):
-            with st.spinner(t["analyzing"]):
-                try:
-                    # Use state coordinates
-                    lat = st.session_state.current_location["lat"]
-                    lon = st.session_state.current_location["lon"]
-                    
-                    # A. SATELLITE
-                    satellite_data, _ = Kishan.get_satellite_data(lat, lon)
-                    
-                    # B. WEATHER
-                    weather_data, _ = Kishan.get_weather_forecast(lat, lon)
-                    
-                    # C. ML PREDICTION
-                    prediction, _ = Kishan.predict_yield(lat, lon, satellite_data, weather_data, crop_type)
-                    
-                    # D. SAVE RESULTS
-                    st.session_state.current_analysis = {
-                        'latitude': lat, 'longitude': lon, 'crop_type': crop_type,
-                        'analysis_date': datetime.now().strftime('%Y-%m-%d %H:%M'),
-                        'ndvi': satellite_data['ndvi'],
-                        'gndvi': satellite_data['gndvi'],
-                        'ndwi': satellite_data['ndwi'],
-                        'savi': satellite_data['savi'],
-                        'soil_moisture': satellite_data['soil_moisture'],
-                        'avg_temperature': np.mean([d['temperature_avg'] for d in weather_data]),
-                        'total_precipitation': np.sum([d['precipitation_total'] for d in weather_data]),
-                        'predicted_yield': prediction,
-                        'satellite_data': satellite_data,
-                        'weather_data': weather_data
-                    }
-                    st.success("✅ Analysis Complete!")
-                    
-                except Exception as e:
-                    st.error(f"❌ Analysis failed: {str(e)}")
-                    st.session_state.current_analysis = None
+    # HANDLE MAP CLICKS (The Sync Logic)
+    if map_data and map_data.get("last_clicked"):
+        clicked_lat = map_data["last_clicked"]["lat"]
+        clicked_lng = map_data["last_clicked"]["lng"]
+
+        # Get current stored location
+        current_lat = st.session_state.current_location["lat"]
+        current_lng = st.session_state.current_location["lon"]
+
+        # Check if new click (tolerance ~11 meters)
+        if abs(clicked_lat - current_lat) > 0.0001 or abs(clicked_lng - current_lng) > 0.0001:
+            # 1. Update Main State
+            st.session_state.current_location = {"lat": clicked_lat, "lon": clicked_lng}
+            # 2. Update widget state
+            st.session_state["lat_input_box"] = clicked_lat
+            st.session_state["lon_input_box"] = clicked_lng
+            # 3. Rerun to refresh the view
+            st.rerun()
+
+    # Centered analyze button
+    st.markdown('<div class="center-button">', unsafe_allow_html=True)
+
+    # Try to display farmer illustration if available (search common paths)
+    for _p in ("assets/farmer.png", "farmer.png", "static/farmer.png"):
+        if os.path.exists(_p):
+            st.image(_p, width=140)
+            break
+
+    required_apis = ['model']
+    missing_apis = [api for api in required_apis if not Kishan.api_status[api]]
+    analyze_disabled = bool(missing_apis)
+    if missing_apis:
+        st.error(f"❌ API Error: {', '.join(missing_apis)}")
+
+    if st.button(t["analyze_btn"], type="primary", use_container_width=True, disabled=analyze_disabled):
+        with st.spinner(t["analyzing"]):
+            try:
+                lat = st.session_state.current_location["lat"]
+                lon = st.session_state.current_location["lon"]
+                satellite_data, _ = Kishan.get_satellite_data(lat, lon)
+                weather_data, _ = Kishan.get_weather_forecast(lat, lon)
+                prediction, _ = Kishan.predict_yield(lat, lon, satellite_data, weather_data, crop_type)
+                st.session_state.current_analysis = {
+                    'latitude': lat, 'longitude': lon, 'crop_type': crop_type,
+                    'analysis_date': datetime.now().strftime('%Y-%m-%d %H:%M'),
+                    'ndvi': satellite_data['ndvi'],
+                    'gndvi': satellite_data['gndvi'],
+                    'ndwi': satellite_data['ndwi'],
+                    'savi': satellite_data['savi'],
+                    'soil_moisture': satellite_data['soil_moisture'],
+                    'avg_temperature': np.mean([d['temperature_avg'] for d in weather_data]),
+                    'total_precipitation': np.sum([d['precipitation_total'] for d in weather_data]),
+                    'predicted_yield': prediction,
+                    'satellite_data': satellite_data,
+                    'weather_data': weather_data
+                }
+                st.success("✅ Analysis Complete!")
+            except Exception as e:
+                st.error(f"❌ Analysis failed: {str(e)}")
+                st.session_state.current_analysis = None
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # --- 7. RESULTS & CHAT TABS ---
     st.markdown("---")
@@ -1003,7 +1066,7 @@ def main():
             with m_col1: # NDVI
                 ndvi_color = "🟢" if analysis['ndvi'] > 0.6 else "🟡" if analysis['ndvi'] > 0.3 else "🔴"
                 st.markdown(f"""
-                <div class="metric-card">
+                <div class="metric-card-box bg-ndvi">
                     <h3>NDVI (Health)</h3>
                     <h2>{analysis['ndvi']:.2f} {ndvi_color}</h2>
                 </div>
@@ -1011,7 +1074,7 @@ def main():
             
             with m_col2: # YIELD
                 st.markdown(f"""
-                <div class="metric-card">
+                <div class="metric-card-box bg-yield">
                     <h3>{t['metric_yield']}</h3>
                     <h2>{analysis['predicted_yield']:.1f}</h2>
                     <p>tons/ha</p>
@@ -1023,7 +1086,7 @@ def main():
                 sm_status_key = "status_optimal" if 20 <= sm_val <= 60 else "status_dry" if sm_val < 20 else "status_wet"
                 sm_status_text = t.get(sm_status_key, "Unknown")
                 st.markdown(f"""
-                <div class="metric-card">
+                <div class="metric-card-box bg-moisture">
                     <h3>{t['metric_soil']}</h3>
                     <h2>{sm_val:.1f}%</h2>
                     <p>{sm_status_text}</p>
@@ -1032,7 +1095,7 @@ def main():
                 
             with m_col4: # RAIN
                 st.markdown(f"""
-                <div class="metric-card">
+                <div class="metric-card-box bg-rain">
                     <h3>{t['metric_rain']}</h3>
                     <h2>{analysis['total_precipitation']:.1f}mm</h2>
                 </div>
