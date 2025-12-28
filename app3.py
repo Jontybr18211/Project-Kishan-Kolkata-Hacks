@@ -19,6 +19,10 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from languages import TRANSLATIONS
 from agronomy_config import CROP_SPECS
+from streamlit_mic_recorder import mic_recorder
+import speech_recognition as sr
+from gtts import gTTS
+import io
 warnings.filterwarnings('ignore')
 
 # Load environment variables
@@ -260,6 +264,55 @@ body, .stMarkdown, .stText { font-family: Inter, system-ui, -apple-system, "Sego
 
 </style>
 """, unsafe_allow_html=True)
+def recognize_audio(audio_bytes, target_lang):
+    """
+    Converts recorded audio bytes to text using Google Speech Recognition.
+    Supports: English, Hindi, Bengali.
+    """
+    if not audio_bytes:
+        return None
+    
+    # Map your UI languages to Google Speech API codes
+    lang_map = {
+        "English": "en-US",
+        "Hindi": "hi-IN",
+        "Bengali": "bn-IN"
+    }
+    lang_code = lang_map.get(target_lang, "en-US")
+    
+    r = sr.Recognizer()
+    try:
+        # Convert bytes to audio source
+        audio_file = io.BytesIO(audio_bytes)
+        with sr.AudioFile(audio_file) as source:
+            audio_data = r.record(source)
+            text = r.recognize_google(audio_data, language=lang_code)
+            return text
+    except sr.UnknownValueError:
+        return None # Could not understand audio
+    except sr.RequestError:
+        return None # API unreachable
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def speak_text(text, target_lang):
+    """
+    Converts text to audio (MP3) for the user to hear.
+    """
+    lang_map = {
+        "English": "en",
+        "Hindi": "hi",
+        "Bengali": "bn"
+    }
+    lang_code = lang_map.get(target_lang, "en")
+    
+    try:
+        tts = gTTS(text=text, lang=lang_code, slow=False)
+        audio_fp = io.BytesIO()
+        tts.write_to_fp(audio_fp)
+        return audio_fp.getvalue()
+    except Exception:
+        return None
 
 class ProjectKishan:
     def __init__(self):
@@ -925,7 +978,6 @@ def main():
     Kishan = st.session_state.Kishan
     
     # --- 2. SIDEBAR PART 1 (Language & Title) ---
-    # We load this first so the app knows the language
     with st.sidebar:
         # A. LANGUAGE SELECTOR
         selected_lang = st.selectbox("🌐 Language / भाषा / ভাষা", ["English", "Hindi", "Bengali"])
@@ -939,13 +991,43 @@ def main():
     st.markdown(f'<div class="main-header">🌱 {t["title"]}</div>', unsafe_allow_html=True)
     st.markdown(f'<p style="text-align: center; font-size: 1.08rem; color: #1a531b; margin-bottom: 0.9rem; margin-top:0.25rem;">{t["tagline"]}</p>', unsafe_allow_html=True)
     
-    # --- 4. MAP & ANALYSIS SECTION ---
-    col1, col2 = st.columns([2, 1])
+    # --- 4. MAP & ANALYSIS SECTION (FULL WIDTH) ---
+    # We do NOT use columns here so the map stays wide.
+    # LOGIC ORDER: This runs FIRST to update state before sidebar widgets are drawn.
     
-    # --- MAP LOGIC (moved: map will render in centered container below sidebar inputs) ---
+    st.markdown('<div class="center-wrapper">', unsafe_allow_html=True)
 
-    # --- 5. SIDEBAR PART 2 (Inputs & Crop Selector) ---
-    # Now we draw the widgets. They will pick up the updated values from above.
+    # Display Interactive Map using state coordinates
+    map_obj = create_interactive_map(
+        st.session_state.current_location["lat"],
+        st.session_state.current_location["lon"]
+    )
+    # Height adjusted slightly to match your preference
+    map_data = st_folium(map_obj, width=None, height=420, returned_objects=["last_clicked"])
+
+    # HANDLE MAP CLICKS (The Sync Logic)
+    if map_data and map_data.get("last_clicked"):
+        clicked_lat = map_data["last_clicked"]["lat"]
+        clicked_lng = map_data["last_clicked"]["lng"]
+
+        # Get current stored location
+        current_lat = st.session_state.current_location["lat"]
+        current_lng = st.session_state.current_location["lon"]
+
+        # Check if new click (tolerance ~11 meters)
+        if abs(clicked_lat - current_lat) > 0.0001 or abs(clicked_lng - current_lng) > 0.0001:
+            # 1. Update Main State
+            st.session_state.current_location = {"lat": clicked_lat, "lon": clicked_lng}
+            # 2. Update widget state (Safe here because widgets aren't drawn yet)
+            st.session_state["lat_input_box"] = clicked_lat
+            st.session_state["lon_input_box"] = clicked_lng
+            # 3. Rerun to refresh the view
+            st.rerun()
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- 5. SIDEBAR PART 2 (INPUTS) ---
+    # Now that the map logic is done, we can safely draw the sidebar inputs.
     with st.sidebar:
         # Callback to sync manual typing to state
         def update_location_from_input():
@@ -990,40 +1072,11 @@ def main():
             st.write(f"{status_icon(Kishan.api_status['weather'])} Weather")
             st.write(f"{status_icon(Kishan.api_status['gemini'])} Gemini")
 
-    # --- 6. ANALYSIS BUTTON SECTION (Centered map + button) ---
-    # Render the map and the analyze button centered on the page (after sidebar inputs).
-    st.markdown('<div class="center-wrapper">', unsafe_allow_html=True)
-
-    # Display Interactive Map using state coordinates
-    map_obj = create_interactive_map(
-        st.session_state.current_location["lat"],
-        st.session_state.current_location["lon"]
-    )
-    map_data = st_folium(map_obj, width=None, height=420, returned_objects=["last_clicked"])
-
-    # HANDLE MAP CLICKS (The Sync Logic)
-    if map_data and map_data.get("last_clicked"):
-        clicked_lat = map_data["last_clicked"]["lat"]
-        clicked_lng = map_data["last_clicked"]["lng"]
-
-        # Get current stored location
-        current_lat = st.session_state.current_location["lat"]
-        current_lng = st.session_state.current_location["lon"]
-
-        # Check if new click (tolerance ~11 meters)
-        if abs(clicked_lat - current_lat) > 0.0001 or abs(clicked_lng - current_lng) > 0.0001:
-            # 1. Update Main State
-            st.session_state.current_location = {"lat": clicked_lat, "lon": clicked_lng}
-            # 2. Update widget state
-            st.session_state["lat_input_box"] = clicked_lat
-            st.session_state["lon_input_box"] = clicked_lng
-            # 3. Rerun to refresh the view
-            st.rerun()
-
-    # Centered analyze button
+    # --- 6. ANALYZE BUTTON (FULL WIDTH) ---
+    # This renders below the map in the main flow
     st.markdown('<div class="center-button">', unsafe_allow_html=True)
 
-    # Try to display farmer illustration if available (search common paths)
+    # Try to display farmer illustration if available
     for _p in ("assets/farmer.png", "farmer.png", "static/farmer.png"):
         if os.path.exists(_p):
             st.image(_p, width=140)
@@ -1062,7 +1115,6 @@ def main():
                 st.error(f"❌ Analysis failed: {str(e)}")
                 st.session_state.current_analysis = None
 
-    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- 7. RESULTS & CHAT TABS ---
@@ -1150,30 +1202,84 @@ def main():
             else:
                 st.warning("AI Insights unavailable (Gemini API offline)")
 
-    # --- TAB 2: AI CHAT ---
+    # --- TAB 2: AI CHAT (VOICE ENABLED) ---
     with tab2:
         st.subheader(t["chat_header"])
+        
         if not st.session_state.current_analysis:
             st.warning("Please run analysis first to enable Context-Aware Chat.")
         else:
+            # 1. Display Chat History
             for message in st.session_state.chat_history:
                 role_display = "👤 You" if message['role'] == 'user' else f"🤖 {t['title']}"
-                st.chat_message(message['role']).write(message['content'])
+                with st.chat_message(message['role']):
+                    st.write(message['content'])
+                    # If this is an assistant message and has audio, play it
+                    if message.get('audio'):
+                        st.audio(message['audio'], format='audio/mp3')
+
+            # 2. Voice Input Section
+            st.markdown("---")
+            c1, c2 = st.columns([1, 8])
             
+            # VOICE RECORDER BUTTON
+            with c1:
+                st.write("🎙️")
+                # This records audio and returns the bytes
+                audio_input = mic_recorder(
+                    start_prompt="Rec",
+                    stop_prompt="Stop",
+                    key='recorder',
+                    format="wav",  # Important for SpeechRecognition
+                    use_container_width=True
+                )
+
+            # 3. Handle Voice Input OR Text Input
+            user_text = None
+            
+            # CHECK: Did user speak?
+            if audio_input and audio_input['bytes']:
+                # Transcribe the audio
+                transcribed_text = recognize_audio(audio_input['bytes'], selected_lang)
+                if transcribed_text:
+                    user_text = transcribed_text
+            
+            # CHECK: Did user type?
             if prompt := st.chat_input(t["chat_placeholder"]):
-                st.session_state.chat_history.append({'role': 'user', 'content': prompt})
-                st.chat_message("user").write(prompt)
+                user_text = prompt
+
+            # 4. Process the Input (Voice or Text)
+            if user_text:
+                # Add User Message to Chat
+                st.session_state.chat_history.append({'role': 'user', 'content': user_text})
+                st.chat_message("user").write(user_text)
                 
-                with st.spinner("Thinking..."):
+                with st.spinner("Thinking & Speaking..."):
                     try:
-                        ai_response = Kishan.generate_ai_response(
-                            prompt,
+                        # Get AI Text Response
+                        ai_response_text = Kishan.generate_ai_response(
+                            user_text,
                             st.session_state.current_analysis,
                             st.session_state.chat_history,
                             language_instruction=t["prompt_instruction"]
                         )
-                        st.session_state.chat_history.append({'role': 'assistant', 'content': ai_response})
-                        st.chat_message("assistant").write(ai_response)
+                        
+                        # Generate Audio for the Response
+                        audio_response = speak_text(ai_response_text, selected_lang)
+                        
+                        # Save to history with audio
+                        st.session_state.chat_history.append({
+                            'role': 'assistant', 
+                            'content': ai_response_text,
+                            'audio': audio_response
+                        })
+                        
+                        # Display AI Response immediately
+                        with st.chat_message("assistant"):
+                            st.write(ai_response_text)
+                            if audio_response:
+                                st.audio(audio_response, format='audio/mp3', start_time=0)
+                                
                     except Exception as e:
                         st.error(f"AI Error: {str(e)}")
 
