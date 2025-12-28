@@ -965,6 +965,22 @@ def display_system_status(Kishan):
                 </div>
                 """, unsafe_allow_html=True)
 
+def render_multilingual_contact(translations_dict):
+    """
+    Generate HTML for multilingual contact information (WhatsApp phone and join code).
+    Shows labels and contact details in the selected language.
+    """
+    contact_html = f"""
+    <div style="text-align:center; margin-bottom:0.9rem; font-size:0.95rem; color:#ff0000;">
+        <span style="font-weight:800; margin-right:8px; color:#ffffff;">{translations_dict.get('contact_whatsapp_label', 'Chat us on WhatsApp')}:</span>
+        <span style="font-weight:800; margin-right:16px; color:#ff0000;">{translations_dict.get('contact_phone', '+14155238886')}</span>
+        <br style="margin: 6px 0;">
+        <span style="font-weight:900; margin-right:8px; color:#ffffff;">{translations_dict.get('contact_code_label', 'Code to initialize the chat')}:</span>
+        <span style="font-weight:800; color:#ff0000;">{translations_dict.get('contact_join_code', 'join shorter-far')}</span>
+    </div>
+    """
+    return contact_html
+
 def main():
     # --- 1. SESSION STATE INITIALIZATION ---
     if 'Kishan' not in st.session_state:
@@ -989,7 +1005,11 @@ def main():
 
     # --- 3. MAIN HEADER ---
     st.markdown(f'<div class="main-header">🌱 {t["title"]}</div>', unsafe_allow_html=True)
-    st.markdown(f'<p style="text-align: center; font-size: 1.08rem; color: #1a531b; margin-bottom: 0.9rem; margin-top:0.25rem;">{t["tagline"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p style="text-align: center; font-size: 1.08rem; color: #1a531b; margin-bottom: 0.4rem; margin-top:0.25rem;">{t["tagline"]}</p>', unsafe_allow_html=True)
+
+    # Render multilingual contact information
+    contact_html = render_multilingual_contact(t)
+    st.markdown(contact_html, unsafe_allow_html=True)
     
     # --- 4. MAP & ANALYSIS SECTION (FULL WIDTH) ---
     # We do NOT use columns here so the map stays wide.

@@ -28,7 +28,12 @@ TRANSLATIONS = {
         "status_moderate": "Moderate",
 
         # AI Instruction (Crucial)
-        "prompt_instruction": "Answer in English. Keep it simple and actionable."
+        "prompt_instruction": "Answer in English. Keep it simple and actionable.",
+        # Contact information
+        "contact_whatsapp_label": "Chat us on WhatsApp",
+        "contact_code_label": "Code to initialize the chat",
+        "contact_phone": "+14155238886",
+        "contact_join_code": "join shorter-far"
     },
     
     "Bengali": {
@@ -58,7 +63,12 @@ TRANSLATIONS = {
         "status_moderate": "মাঝারি",
 
         # AI Instruction
-        "prompt_instruction": "Answer in Bengali (Bangla) language. Use clear, simple agricultural terms suitable for a farmer in West Bengal."
+        "prompt_instruction": "Answer in Bengali (Bangla) language. Use clear, simple agricultural terms suitable for a farmer in West Bengal.",
+        # Contact information
+        "contact_whatsapp_label": "WhatsApp এ আমাদের সাথে যোগাযোগ করুন",
+        "contact_code_label": "চ্যাট শুরু করার জন্য কোড",
+        "contact_phone": "+14155238886",
+        "contact_join_code": "join shorter-far"
     },
     
     "Hindi": {
@@ -88,6 +98,11 @@ TRANSLATIONS = {
         "status_moderate": "मध्यम",
 
         # AI Instruction
-        "prompt_instruction": "Answer in Hindi language. Use clear, simple agricultural terms."
+        "prompt_instruction": "Answer in Hindi language. Use clear, simple agricultural terms.",
+        # Contact information
+        "contact_whatsapp_label": "WhatsApp पर हमसे संपर्क करें",
+        "contact_code_label": "चैट शुरू करने के लिए कोड",
+        "contact_phone": "+14155238886",
+        "contact_join_code": "join shorter-far"
     }
 }
